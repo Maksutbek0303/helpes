@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-6 col-lg-4">
+  <h1 class="h4 mb-3">Вход для сотрудников технической службы</h1>
+  <form method="post" class="card card-body hp-form">
+    {% csrf_token %}
+    {% if form.errors %}<div class="alert alert-danger">Неверный логин или пароль, либо учётная запись отключена.</div>{% endif %}
+    {% include "includes/field.html" with field=form.username %}
+    {% include "includes/field.html" with field=form.password %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn btn-gold btn-lg">Войти</button>
+  </form>
+  <p class="text-muted small mt-3">Сотрудникам для отправки заявки входить не нужно — <a href="{% url 'new_ticket' %}">перейти к форме</a>.</p>
+</div></div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Пользователи</h1>
+  <a class="btn btn-gold" href="{% url 'user_create' %}">+ Новый пользователь</a>
+</div>
+<div class="card"><div class="table-responsive"><table class="table align-middle mb-0">
+  <thead><tr><th>Имя</th><th>Логин</th><th>Роли</th><th>Открытых заявок</th><th></th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+  <tr class="{% if not r.u.is_active %}text-muted{% endif %}">
+    <td>{{ r.u.get_full_name|default:"—" }}</td><td>{{ r.u.username }}</td>
+    <td>{% if r.tech %}<span class="badge text-bg-primary">техник</span> {% endif %}{% if r.admin %}<span class="badge text-bg-dark">администратор</span>{% endif %}
+        {% if not r.u.is_active %}<span class="badge text-bg-secondary">отключён</span>{% endif %}</td>
+    <td>{{ r.u.open_count }}</td>
+    <td class="text-end text-nowrap">
+      <a class="btn btn-sm btn-outline-primary" href="{% url 'user_edit' r.u.pk %}">Изменить</a>
+      {% if r.u.is_active %}<a class="btn btn-sm btn-outline-danger" href="{% url 'user_deactivate' r.u.pk %}">Отключить</a>
+      {% else %}<form method="post" action="{% url 'user_activate' r.u.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-success">Включить</button></form>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody></table></div></div>
+{% endblock %}

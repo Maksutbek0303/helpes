@@ -1,0 +1,17 @@
+:root { --hp-gold: #b8860b; --hp-ink: #23272e; }
+body { background: #f5f6f8; color: var(--hp-ink); }
+.hp-nav { background: var(--hp-ink); }
+.hp-mark { display: inline-block; width: 1.6rem; height: 1.6rem; line-height: 1.6rem; text-align: center;
+  background: var(--hp-gold); color: #fff; border-radius: .35rem; margin-right: .25rem; }
+.btn-gold { background: var(--hp-gold); border-color: var(--hp-gold); color: #fff; }
+.btn-gold:hover, .btn-gold:focus { background: #9a7009; border-color: #9a7009; color: #fff; }
+.card { border: 0; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.hp-form .form-control, .hp-form .form-select { min-height: 3rem; font-size: 1.05rem; }
+.hp-form textarea.form-control { min-height: 6rem; }
+.hp-form .btn-lg { min-height: 3.4rem; }
+.status-badge { font-size: .85rem; }
+.hp-hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+.timeline { list-style: none; padding-left: 0; }
+.timeline li { border-left: 3px solid #d9dce1; padding: 0 0 .9rem .9rem; margin-left: .3rem; }
+.pre-wrap { white-space: pre-wrap; }
+@media (max-width: 575.98px) { main.container { padding-left: .75rem; padding-right: .75rem; } }

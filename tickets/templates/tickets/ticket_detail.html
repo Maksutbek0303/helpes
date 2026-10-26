@@ -1,0 +1,89 @@
+{% extends "base.html" %}{% load helpes_tags %}
+{% block title %}{{ ticket.number }}{% endblock %}
+{% block content %}
+<a href="{% url 'queue' %}" class="small">← К списку заявок</a>
+<h1 class="h4 my-2">{{ ticket.number }}</h1>
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card card-body mb-3">
+      <div class="mb-2">{% status_badge ticket %}</div>
+      <h2 class="h5">{{ ticket.summary }}</h2>
+      {% if ticket.details %}<p class="pre-wrap">{{ ticket.details }}</p>{% endif %}
+      <dl class="row mb-0 small">
+        <dt class="col-4">Сотрудник</dt><dd class="col-8">{{ ticket.employee_name }}</dd>
+        <dt class="col-4">Место</dt><dd class="col-8">{{ ticket.place }}</dd>
+        <dt class="col-4">Создана</dt><dd class="col-8">{{ ticket.created_at|date:"d.m.Y H:i" }}</dd>
+        <dt class="col-4">Обновлена</dt><dd class="col-8">{{ ticket.updated_at|date:"d.m.Y H:i" }}</dd>
+        <dt class="col-4">Исполнитель</dt><dd class="col-8">{% if ticket.assignee %}{{ ticket.assignee|dname }}{% else %}не назначен{% endif %}</dd>
+        {% if ticket.completed_at %}<dt class="col-4">Выполнена</dt><dd class="col-8">{{ ticket.completed_at|date:"d.m.Y H:i" }}</dd>{% endif %}
+      </dl>
+      <hr>
+      <div class="fw-semibold mb-1">Оборудование</div>
+      <ul class="mb-0">{% for i in items %}<li>{{ i.category.name }} — {{ i.quantity }}</li>{% endfor %}</ul>
+      {% if ticket.resolution %}<hr><div class="fw-semibold mb-1">Результат</div><p class="pre-wrap mb-0">{{ ticket.resolution }}</p>{% endif %}
+    </div>
+
+    <div class="card card-body mb-3">
+      <h2 class="h6">Комментарии</h2>
+      {% for c in comments %}<div class="border-bottom pb-2 mb-2"><div class="small text-muted">{{ c.author|dname }} · {{ c.created_at|date:"d.m.Y H:i" }}</div><div class="pre-wrap">{{ c.text }}</div></div>
+      {% empty %}<p class="text-muted small">Комментариев пока нет.</p>{% endfor %}
+      <form method="post" action="{% url 'ticket_comment' ticket.pk %}">{% csrf_token %}
+        {% include "includes/field.html" with field=comment_form.text %}
+        <button class="btn btn-outline-primary btn-sm">Добавить комментарий</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card card-body mb-3">
+      <h2 class="h6">Действия</h2>
+      {% if can_claim %}
+      <form method="post" action="{% url 'ticket_claim' ticket.pk %}" class="mb-2">{% csrf_token %}<button class="btn btn-gold w-100 btn-lg">Взять в работу</button></form>
+      {% endif %}
+      {% if can_change %}
+      <form method="post" action="{% url 'ticket_status' ticket.pk %}" class="mb-2">{% csrf_token %}
+        {% include "includes/field.html" with field=status_form.status %}
+        {% include "includes/field.html" with field=status_form.comment %}
+        {% include "includes/field.html" with field=status_form.resolution %}
+        <button class="btn btn-primary w-100">Сохранить статус</button>
+      </form>
+      {% endif %}
+      {% if can_release %}
+      <form method="post" action="{% url 'ticket_release' ticket.pk %}" class="mb-2" onsubmit="return confirm('Вернуть заявку в общую очередь?')">{% csrf_token %}<button class="btn btn-outline-secondary w-100">Вернуть в очередь</button></form>
+      {% endif %}
+      {% if not can_claim and not can_change and not can_release %}<p class="text-muted small mb-0">Для этой заявки нет доступных вам действий.</p>{% endif %}
+    </div>
+
+    {% if can_assign %}
+    <div class="card card-body mb-3">
+      <h2 class="h6">Назначение (администратор)</h2>
+      <form method="post" action="{% url 'ticket_assign' ticket.pk %}">{% csrf_token %}
+        {% include "includes/field.html" with field=assign_form.technician %}
+        <button class="btn btn-outline-primary w-100">{% if ticket.assignee %}Переназначить{% else %}Назначить{% endif %}</button>
+      </form>
+    </div>
+    {% endif %}
+    {% if can_reopen %}
+    <div class="card card-body mb-3">
+      <h2 class="h6">Повторное открытие (администратор)</h2>
+      <form method="post" action="{% url 'ticket_reopen' ticket.pk %}">{% csrf_token %}
+        <input class="form-control mb-2" name="note" maxlength="300" placeholder="Причина (необязательно)">
+        <button class="btn btn-outline-warning w-100">Открыть повторно</button>
+      </form>
+      <p class="small text-muted mt-2 mb-0">Предыдущее завершение останется в истории.</p>
+    </div>
+    {% endif %}
+
+    <div class="card card-body">
+      <h2 class="h6">История</h2>
+      <ul class="timeline mb-0">
+        {% for h in history %}
+        <li><div class="small text-muted">{{ h.created_at|date:"d.m.Y H:i" }} · {% if h.actor %}{{ h.actor|dname }}{% else %}сотрудник{% endif %}</div>
+          <div><strong>{{ h.get_action_display }}</strong>{% if h.old_value or h.new_value %}: {{ h.old_value|default:"—" }} → {{ h.new_value|default:"—" }}{% endif %}</div>
+          {% if h.note %}<div class="small text-muted pre-wrap">{{ h.note }}</div>{% endif %}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

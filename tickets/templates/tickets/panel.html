@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load helpes_tags %}
+{% block title %}Панель администратора{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">Панель администратора</h1>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><a class="card card-body text-decoration-none text-reset" href="{% url 'queue' %}?scope=free"><div class="small text-muted">Не назначены</div><div class="fs-2 fw-semibold">{{ free }}</div></a></div>
+  <div class="col-6 col-md-3"><a class="card card-body text-decoration-none text-reset" href="{% url 'queue' %}?scope=stale"><div class="small text-muted">Давно без обновлений</div><div class="fs-2 fw-semibold text-danger">{{ stale }}</div></a></div>
+  <div class="col-6 col-md-3"><a class="card card-body text-decoration-none text-reset" href="{% url 'queue' %}?scope=open"><div class="small text-muted">Всего открытых</div><div class="fs-2 fw-semibold">{{ open }}</div></a></div>
+</div>
+<div class="row g-3">
+  <div class="col-md-6"><div class="card card-body">
+    <h2 class="h6">Нагрузка техников</h2>
+    <table class="table table-sm mb-0"><tbody>
+      {% for t in technicians %}<tr><td>{{ t|dname }}</td><td class="text-end"><a href="{% url 'queue' %}?scope=open&assignee={{ t.pk }}">{{ t.open_count }}</a></td></tr>
+      {% empty %}<tr><td class="text-muted">Активных техников нет. <a href="{% url 'user_create' %}">Создать</a></td></tr>{% endfor %}
+    </tbody></table>
+  </div></div>
+  <div class="col-md-6"><div class="card card-body">
+    <h2 class="h6">Управление</h2>
+    <div class="d-grid gap-2">
+      <a class="btn btn-outline-secondary" href="{% url 'user_list' %}">Пользователи</a>
+      <a class="btn btn-outline-secondary" href="{% url 'catalog_list' 'floors' %}">Этажи</a>
+      <a class="btn btn-outline-secondary" href="{% url 'catalog_list' 'locations' %}">Кабинеты</a>
+      <a class="btn btn-outline-secondary" href="{% url 'catalog_list' 'buildings' %}">Здания</a>
+      <a class="btn btn-outline-secondary" href="{% url 'catalog_list' 'categories' %}">Категории оборудования</a>
+    </div>
+  </div></div>
+</div>
+{% endblock %}

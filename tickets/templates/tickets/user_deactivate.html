@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% load helpes_tags %}
+{% block title %}Отключение пользователя{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+  <h1 class="h4 mb-3">Отключить: {{ target.get_full_name|default:target.username }}</h1>
+  {% if blocker %}
+    <div class="alert alert-danger">{{ blocker }}</div>
+    <a class="btn btn-outline-secondary" href="{% url 'user_list' %}">Назад</a>
+  {% else %}
+  <div class="alert alert-info">История выполненных работ сохранится. Отключённый пользователь не сможет войти.</div>
+  {% if open_tickets %}
+    <div class="alert alert-warning">
+      <strong>У пользователя {{ open_tickets|length }} незавершённых заявок.</strong> Их нужно передать перед отключением:
+      <ul class="mb-0 mt-2">{% for t in open_tickets %}<li><a href="{% url 'ticket_detail' t.pk %}">{{ t.number }}</a> — {{ t.summary|truncatechars:60 }} ({{ t.get_status_display }})</li>{% endfor %}</ul>
+    </div>
+  {% endif %}
+  <form method="post" class="card card-body hp-form">{% csrf_token %}
+    {% if form %}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      {% for field in form %}{% include "includes/field.html" with field=field %}{% endfor %}
+    {% endif %}
+    <div class="d-flex gap-2">
+      <button class="btn btn-danger">Отключить{% if open_tickets %} и обработать заявки{% endif %}</button>
+      <a class="btn btn-outline-secondary" href="{% url 'user_list' %}">Отмена</a>
+    </div>
+  </form>
+  {% endif %}
+</div></div>
+{% endblock %}

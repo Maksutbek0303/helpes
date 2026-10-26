@@ -1,0 +1,53 @@
+{% load static %}<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Helpes{% endblock %} — Кыргыз Алтын</title>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/helpes.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark hp-nav">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{% url 'new_ticket' %}"><span class="hp-mark">H</span> Helpes</a>
+    {% if user.is_authenticated and user_is_tech or user_is_admin %}
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav" aria-label="Меню"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'queue' %}">Заявки</a></li>
+        {% if user_is_admin %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'panel' %}">Панель</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'user_list' %}">Пользователи</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Справочники</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'catalog_list' 'buildings' %}">Здания</a></li>
+            <li><a class="dropdown-item" href="{% url 'catalog_list' 'floors' %}">Этажи</a></li>
+            <li><a class="dropdown-item" href="{% url 'catalog_list' 'locations' %}">Кабинеты</a></li>
+            <li><a class="dropdown-item" href="{% url 'catalog_list' 'categories' %}">Категории</a></li>
+          </ul>
+        </li>
+        {% endif %}
+      </ul>
+      <form method="post" action="{% url 'logout' %}" class="d-flex align-items-center gap-2">
+        {% csrf_token %}
+        <span class="text-light small">{{ user.get_full_name|default:user.username }}</span>
+        <button class="btn btn-sm btn-outline-light">Выйти</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</nav>
+<main class="container py-4">
+  {% for m in messages %}
+    <div class="alert alert-{% if m.tags == 'error' %}danger{% else %}{{ m.tags|default:'info' }}{% endif %} alert-dismissible" role="alert">
+      {{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+    </div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<script src="{% static 'vendor/bootstrap.bundle.min.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

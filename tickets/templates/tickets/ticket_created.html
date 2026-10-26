@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Заявка отправлена{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-8 col-lg-6">
+  <div class="card card-body text-center py-5">
+    <div class="display-6 text-success mb-2" aria-hidden="true">✓</div>
+    <h1 class="h4">Заявка отправлена</h1>
+    <p class="text-muted mb-2">Номер вашей заявки:</p>
+    <p class="display-5 fw-bold mb-3" id="ticket-number">{{ number }}</p>
+    <p class="text-muted">Запишите или запомните номер — по нему техническая служба найдёт обращение.</p>
+    <a class="btn btn-gold mt-2" href="{% url 'new_ticket' %}">Создать ещё одну заявку</a>
+  </div>
+</div></div>
+{% endblock %}
