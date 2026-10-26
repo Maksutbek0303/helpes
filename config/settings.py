@@ -47,12 +47,15 @@ if not SECRET_KEY:
         )
 
 ALLOWED_HOSTS = env_list(
+    "helpes.onrender.com",
     "DJANGO_ALLOWED_HOSTS",
     "localhost,127.0.0.1",
 )
 
+
 CSRF_TRUSTED_ORIGINS = env_list(
-    "DJANGO_CSRF_TRUSTED_ORIGINS"
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    "https://helpes.onrender.com",
 )
 
 
