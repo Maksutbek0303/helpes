@@ -52,8 +52,6 @@ ALLOWED_HOSTS = env_list(
     "helpes.onrender.com,localhost,127.0.0.1",
 )
 
-
-
 CSRF_TRUSTED_ORIGINS = env_list(
     "DJANGO_CSRF_TRUSTED_ORIGINS",
     "https://helpes.onrender.com",
@@ -213,8 +211,8 @@ HELPES_RATE_LIMIT_WINDOW = int(
     os.environ.get("HELPES_RATE_LIMIT_WINDOW", "3600")
 )
 
-# True только если приложение действительно находится
-# за доверенным обратным прокси, который задаёт X-Forwarded-For.
+# True только если приложение находится за доверенным
+# обратным прокси, который задаёт X-Forwarded-For.
 HELPES_BEHIND_PROXY = env_bool("HELPES_BEHIND_PROXY", False)
 
 
