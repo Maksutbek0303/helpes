@@ -46,11 +46,12 @@ if not SECRET_KEY:
             "Задайте DJANGO_SECRET_KEY (см. .env.example)."
         )
 
+
 ALLOWED_HOSTS = env_list(
-    "helpes.onrender.com",
     "DJANGO_ALLOWED_HOSTS",
-    "localhost,127.0.0.1",
+    "helpes.onrender.com,localhost,127.0.0.1",
 )
+
 
 
 CSRF_TRUSTED_ORIGINS = env_list(
